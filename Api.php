@@ -39,8 +39,7 @@ class Api extends sqlfile
 		$result=json_decode($param,true);//print_r($result['filter']);die;
 		$filter= $result['filter'];
 		$table=$result['table']['table'];
-		$response=$this->delete($
-		,$filter);//print_r($response);die;
+		$response=$this->delete($table,$filter);//print_r($response);die;
 		return $response;
 	}
 }
