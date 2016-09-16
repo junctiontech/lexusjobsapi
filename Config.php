@@ -10,7 +10,7 @@ class Config
 	
   	  function connection()
   	 {
-  	 	  $con=mysqli_connect('localhost','root','','jobportal');
+  	 	  $con=mysqli_connect('localhost','root','initial1$','jobportal');
 		  if (mysqli_connect_error()) 
 		  {
 				return 0;
