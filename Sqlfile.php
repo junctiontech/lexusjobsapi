@@ -1,14 +1,14 @@
 <?php
 include('Config.php');
-class sqlfile extends Config
+abstract class sqlfile
 {
 	function get($tableName,$filter)
 	{	
 		$i=1;
 		$fields='';
 		$result=array();
-		$connection=$this->connection();
-		if(isset($connection))
+		$connection=Config::getConnection();
+		if(isset($connection) && !empty($connection) && $connection!==0)
 		{
 			if(isset($filter) && !empty($filter) && count($filter)>0)
 			{
@@ -27,7 +27,7 @@ class sqlfile extends Config
 				}
 				$sql="select * from $tableName where $fields";//echo $sql;die;
 				$query=mysqli_query($connection,$sql);
-				if(mysqli_num_rows($query)!==0)
+				if(mysqli_num_rows($query)>0)
 				{
 					foreach($query as $list)
 					{
@@ -37,14 +37,14 @@ class sqlfile extends Config
 				}
 				else 
 				{
-					$response=array('code'=>'400','message'=>'Invalid Id','result'=>$result);return $response;
+					$response=array('code'=>'401','message'=>'Invalid Id','result'=>mysqli_error($connection));return $response;
 				}
 			}
 			else
 			{
 				$sql="select * from $tableName";
 				$query=mysqli_query($connection,$sql);
-				if(mysqli_num_rows($query)!==0)
+				if(mysqli_num_rows($query)>0)
 				{
 					foreach($query as $list)
 					{
@@ -54,10 +54,15 @@ class sqlfile extends Config
 				}
 				else 
 				{
-					$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>$result);return $response;
+					$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>mysqli_error($connection));return $response;
 				}
 			}
 		}
+		else
+		{
+			$response=array('code'=>'502','message'=>'Bad Gateway or Connection Failed','result'=>mysqli_error($connection));return $response;
+		}
+		
 	}
 	
 	
@@ -67,8 +72,8 @@ class sqlfile extends Config
 		$fields='';
 		$colums='';
 		$result=array();
-		$connection=$this->connection();
-		if(isset($connection))
+		$connection=Config::getConnection();
+		if(isset($connection) && !empty($connection) && $connection!==0)
 		{
 			foreach($data as $colum=>$values)
 			{
@@ -85,17 +90,19 @@ class sqlfile extends Config
 				$i++;
 			}
 			$sql="INSERT INTO $table ($colums) Values ($fields)";
-			mysqli_query($connection,$sql);
-			$lastInsertId=mysqli_insert_id($connection);
-			if(isset($lastInsertId) && $lastInsertId!==0)
+			if(mysqli_query($connection,$sql))
 			{
+				$lastInsertId=mysqli_insert_id($connection);
 				$response=array('code'=>'201','message'=>'Insert Successfully','result'=>$lastInsertId);return $response;
 			}
-			else 
-			{
-				$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>$result);return $response;
+			else
+			{ 
+				$response=array('code'=>'401','message'=>'Not Insert','result'=> mysqli_error($connection));return $response; 
 			}
-			
+		}
+		else
+		{
+			$response=array('code'=>'502','message'=>'Bad Gateway or Connection Failed','result'=>mysqli_error($connection));return $response;
 		}
 	}
 	
@@ -106,8 +113,8 @@ class sqlfile extends Config
 		$field='';
 		$filter='';
 		$result=array();
-		$connection=$this->connection();
-		if(isset($connection))
+		$connection=Config::getConnection();
+		if(isset($connection) && !empty($connection) && $connection!==0)
 		{
 				foreach($data as $colum=>$value)
 				{	
@@ -137,14 +144,18 @@ class sqlfile extends Config
 				}
 				$sql="UPDATE $table SET $field $filter";
 				$query=mysqli_query($connection,$sql);
-				if(isset($query))
+				if($query)
 				{
-						$response=array('code'=>'200','message'=>'Update Successfully','result'=>$result);return $response;
+						$response=array('code'=>'200','message'=>'Update Successfully','result'=>$data);return $response;
 				}
 				else
 				{
-						$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>$result);return $response;
+						$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>mysqli_error($connection));return $response;
 				}
+		}
+		else
+		{
+			$response=array('code'=>'502','message'=>'Bad Gateway or Connection Failed','result'=>mysqli_error($connection));return $response;
 		}
 	
 	}
@@ -154,8 +165,8 @@ class sqlfile extends Config
 		$i=1;
 		$field='';
 		$result=array();
-		$connection=$this->connection();
-		if(isset($connection))
+		$connection=Config::getConnection();
+		if(isset($connection) && !empty($connection) && $connection!==0)
 		{	
 			foreach($filter as $colum=>$value)
 			{
@@ -172,14 +183,21 @@ class sqlfile extends Config
 			}
 			$sql="DELETE from $tableName where $field";
 			$query=mysqli_query($connection,$sql);//echo $query;die;echo 
-			if(isset($query)!== 0)
+			if($query)
 			{
-				$response=array('code'=>'200','message'=>'Delete Successfully','result'=>$result);return $response;
+				$response=array('code'=>'200','message'=>'Delete Successfully','result'=>$filter);return $response;
 			}
 			else 
 			{
-				$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>$result);return $response;
+				$response=array('code'=>'401','message'=>'Unauthorized Request','result'=>mysqli_error($connection));return $response;
 			}
 		}
+		else
+		{
+			$response=array('code'=>'502','message'=>'Bad Gateway or Connection Failed','result'=>mysqli_error($connection));return $response;
+		}
 	}
+	
+	
+	 abstract function search($param);
 }
