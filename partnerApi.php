@@ -16,8 +16,9 @@ class partnerApi extends sqlfile
 		return $response;
 	}
 	
-	function postApi($param)
+	function postApi($params)
 	{	
+		$param=json_decode($params);// line add for mobile api and params variable name change also
 		$data=$param['data'];
 		$response=$this->post($this->table,$data);//print_r($fields);die;
 		return $response;
@@ -52,31 +53,35 @@ if(isset($_SERVER['REQUEST_METHOD']) &&!empty($_SERVER['REQUEST_METHOD']))
 	$method=$_SERVER['REQUEST_METHOD'];
 	if(strcasecmp($method, 'get')==0)
 	{	
-		$param=$_GET['data'];
+		$param='';
+		if(isset($_GET['data'])&&!empty($_GET['data']))
+		{
+			$param=$_GET['data'];//echo $param;die;
+		}
 		$response=$instance->getApi($param);
 		echo json_encode($response);
 	}
 	elseif(strcasecmp($method, 'post')==0)
 	{
-		$param=$_POST['data'];
+		$param=$_POST['data'];//print_r(json_encode($param));die;
 		$response=$instance->postApi($param);
-		echo json_encode($response);die;
+		echo json_encode($response);
 	}	
 	elseif(strcasecmp($method, 'put')==0)
 	{
-		$param=$_GET['data'];
+		$param=$_GET['data'];//echo $param;die;
 		$response=$instance->putApi($param);
 		echo json_encode($response);
 	}
 	elseif(strcasecmp($method, 'delete')==0)
 	{
-		$param=$_GET['data'];
+		$param=$_GET['data'];//echo $param;die;
 		$response=$instance->deleteApi($param);
 		echo json_encode($response);
 	}
 	else 
 	{
-		$response=array('code'=>'400','result'=>'unknown method');echo json_encode($response);
+		$response=array('code'=>'400','result'=>'unknown method');//echo json_encode($response);
 	}
 }
 
