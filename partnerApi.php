@@ -29,7 +29,7 @@ class partnerApi extends sqlfile
 		$var=str_replace("_", " ", $param);
 		$result=json_decode($var,true);//return $result;die;
 		$data=$result['data'];
-		$filter=$result['filter'];print_r($data);print_r($filter);die;
+		$filter=$result['filter'];//print_r($data);//print_r($filter);die;
 		$response=$this->put($this->table,$data,$filter);
 		return $response;
 	}
