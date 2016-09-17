@@ -63,7 +63,7 @@ if(isset($_SERVER['REQUEST_METHOD']) &&!empty($_SERVER['REQUEST_METHOD']))
 	}
 	elseif(strcasecmp($method, 'post')==0)
 	{
-		$param=$_POST['data'];print_r($param);die;//print_r(json_encode($param));die;
+		$param=$_POST['data'];//print_r($param);die;//print_r(json_encode($param));die;
 		$response=$instance->postApi($param);
 		echo json_encode($response);
 	}	
