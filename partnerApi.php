@@ -48,7 +48,7 @@ class partnerApi extends sqlfile
 	}
 }
 if(isset($_SERVER['REQUEST_METHOD']) &&!empty($_SERVER['REQUEST_METHOD']))
-{	
+{	echo 'hiii';die;
 	$instance= new partnerApi();
 	$method=$_SERVER['REQUEST_METHOD'];
 	if(strcasecmp($method, 'get')==0)
