@@ -16,10 +16,10 @@ class partnerApi extends sqlfile
 		return $response;
 	}
 	
-	function postApi($params)
+	function postApi($param)
 	{	
-		$param=json_decode($params);print_r($param);die;// line add for mobile api and params variable name change also
-		//$data=$param['data'];
+		//$param=json_decode($params);//print_r($param);die;// line add for mobile api and params variable name change also
+		$data=$param['data'];
 		$response=$this->post($this->table,$param);//print_r($fields);die;
 		return $response;
 	}
