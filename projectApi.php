@@ -56,18 +56,19 @@ if(isset($_SERVER['REQUEST_METHOD']) &&!empty($_SERVER['REQUEST_METHOD']))
 	$method=$_SERVER['REQUEST_METHOD'];
 	if(strcasecmp($method, 'get')==0)
 	{	
+		$param='';
 		if(isset($_GET['data']) &&!empty($_GET['data']))
 		{
 			$param=$_GET['data'];
 		}
-		$response=$instance->getApi($param=false);
+		$response=$instance->getApi($param);
 		echo json_encode($response);
 	}
 	elseif(strcasecmp($method, 'post')==0)
 	{
 		$param=$_POST['data'];
 		$response=$instance->postApi($param);
-		echo json_encode($response);die;
+		echo json_encode($response);
 	}	
 	elseif(strcasecmp($method, 'put')==0)
 	{
